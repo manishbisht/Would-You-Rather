@@ -12,10 +12,12 @@ import {loginAction, logoutAction} from "./pages/login/Actions";
 import Header from "./components/Header";
 import HomePageContainer from "./pages/home/Container";
 import LeaderboardContainer from "./pages/leaderboard/Container";
+import {fetchQuestions} from "./pages/home/ActionCreators";
 
 const engine = new Styletron();
 
 const App = () => {
+    const home = useSelector(state => state.home);
     const login = useSelector(state => state.login);
     const dispatch = useDispatch();
 
@@ -23,7 +25,10 @@ const App = () => {
         if (login.users.isFetching) {
             dispatch(fetchUsers());
         }
-    }, [dispatch, login]);
+        if (home.questions.isFetching) {
+            dispatch(fetchQuestions())
+        }
+    }, [dispatch, login, home]);
 
     const showLogin = () => {
         if (login.currentUser) {

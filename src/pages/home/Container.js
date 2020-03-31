@@ -1,23 +1,15 @@
-import React , { useEffect, useState }from 'react'
-import { useDispatch, useSelector } from "react-redux";
+import React , { useState }from 'react'
+import { useSelector } from "react-redux";
 import { RadioGroup, Radio, ALIGN } from "baseui/radio";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import { Button } from "baseui/button";
-import {fetchQuestions} from "./ActionCreators";
 import {useHistory} from "react-router-dom";
 
 const HomePageContainer = () => {
     const history = useHistory();
     const login = useSelector(state => state.login);
     const home = useSelector(state => state.home);
-    const dispatch = useDispatch();
     const [value, setValue] = useState("2");
-
-    useEffect(() => {
-        if (home.questions.isFetching) {
-            dispatch(fetchQuestions())
-        }
-    }, [dispatch, home]);
 
     const renderQuestions = (isAnswered = false) => {
         const questions = Object.keys(home.questions.data).filter((questionKey) => isAnswered ? login.currentUser.answers[questionKey] : !login.currentUser.answers[questionKey]);

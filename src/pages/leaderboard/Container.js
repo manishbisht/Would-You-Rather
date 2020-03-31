@@ -1,19 +1,10 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {StyledTable, StyledHead, StyledHeadCell, StyledBody, StyledRow, StyledCell} from 'baseui/table';
 import {Avatar} from "baseui/avatar";
-import {useDispatch, useSelector} from "react-redux";
-import {fetchQuestions} from "../home/ActionCreators";
+import {useSelector} from "react-redux";
 
 const LeaderboardContainer = () => {
     const login = useSelector(state => state.login);
-    const home = useSelector(state => state.home);
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (home.questions.isFetching) {
-            dispatch(fetchQuestions())
-        }
-    }, [dispatch, home]);
 
     const renderTableBody = () => {
         const userList = login.users.data;
