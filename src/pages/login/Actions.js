@@ -5,11 +5,11 @@ export const fetchUsersSuccess = users => ({
     payload: users
 });
 
-export const login = (user) => ({
+export const loginAction = (user) => ({
     type: LOGIN_USER,
     payload: user
 });
 
-export const logout = () => ({
+export const logoutAction = () => ({
     type: LOGOUT_USER
 });

@@ -1,41 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './App.css';
 import {BrowserRouter, Switch, Route} from "react-router-dom";
-import {connect} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {Client as Styletron} from 'styletron-engine-atomic';
 import {Provider as StyletronProvider} from 'styletron-react';
 import {LightTheme, BaseProvider} from 'baseui';
 import {Toast, KIND } from 'baseui/toast';
-import {colors} from 'baseui/tokens';
 import LoginContainer from "./pages/login/Container";
 import {fetchUsers} from "./pages/login/ActionCreators";
-import {login, logout} from "./pages/login/Actions";
+import {loginAction, logoutAction} from "./pages/login/Actions";
 import Header from "./components/Header";
+import HomePageContainer from "./pages/home/Container";
+import LeaderboardContainer from "./pages/leaderboard/Container";
 
 const engine = new Styletron();
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+const App = () => {
+    const login = useSelector(state => state.login);
+    const dispatch = useDispatch();
 
-    componentDidMount() {
-        console.log(colors)
-    }
+    useEffect(() => {
+        if (login.users.isFetching) {
+            dispatch(fetchUsers());
+        }
+    }, [dispatch, login]);
 
-    handleLogin(user) {
-        const {dispatch} = this.props;
-        dispatch(login(user))
-    }
-
-    handleLogout() {
-        const {dispatch} = this.props;
-        dispatch(logout())
-    }
-
-    showLogin() {
-        const {login, dispatch} = this.props;
-
+    const showLogin = () => {
         if (login.currentUser) {
             return (
                 <div style={{position: 'fixed', top: 15, right: 15}}>
@@ -43,52 +33,39 @@ class App extends React.Component {
                 </div>
             )
         } else {
-            if (login.users.isFetching) {
-                dispatch(fetchUsers());
-            }
             return (
                 <LoginContainer show={!login.currentUser}
                                 usersData={login.users.data}
-                                handleLogin={(a) => this.handleLogin(a)}/>
+                                handleLogin={(user) => { dispatch(loginAction(user)) }}/>
             )
         }
-    }
+    };
 
-    render() {
-        const {login} = this.props;
-
-        return (
-            <StyletronProvider value={engine}>
-                <BaseProvider theme={LightTheme}>
-                        {this.showLogin()}
-                        {login.currentUser && (
-                            <div>
-                                <Header currentUser={login.currentUser} handleLogout={() => this.handleLogout()}/>
-                                <BrowserRouter>
-                                    <Switch>
-                                        {/*<Route path="/about">*/}
-                                        {/*    <About />*/}
-                                        {/*</Route>*/}
-                                        {/*<Route path="/users">*/}
-                                        {/*    <Users />*/}
-                                        {/*</Route>*/}
-                                        {/*<Route path="/">*/}
-                                        {/*    <Home />*/}
-                                        {/*</Route>*/}
-                                    </Switch>
-                                </BrowserRouter>
-                            </div>
-                        )}
-                </BaseProvider>
-            </StyletronProvider>
-        );
-    }
+    return (
+        <StyletronProvider value={engine}>
+            <BaseProvider theme={LightTheme}>
+                {showLogin()}
+                {login.currentUser && (
+                    <div>
+                        <BrowserRouter>
+                            <Header currentUser={login.currentUser} handleLogout={() => { dispatch(logoutAction()) }}/>
+                            <Switch>
+                                {/*<Route path="/about">*/}
+                                {/*    <About />*/}
+                                {/*</Route>*/}
+                                <Route path="/leaderboard">
+                                    <LeaderboardContainer />
+                                </Route>
+                                <Route path="/">
+                                    <HomePageContainer />
+                                </Route>
+                            </Switch>
+                        </BrowserRouter>
+                    </div>
+                )}
+            </BaseProvider>
+        </StyletronProvider>
+    );
 }
 
-const mapStateToProps = (state) => {
-    return {
-        login: state.login
-    }
-};
-
-export default connect(mapStateToProps)(App);
+export default App
