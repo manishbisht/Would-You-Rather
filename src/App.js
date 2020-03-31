@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './App.css';
 import {BrowserRouter, Switch, Route} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -7,28 +7,43 @@ import {Provider as StyletronProvider} from 'styletron-react';
 import {LightTheme, BaseProvider} from 'baseui';
 import {Toast, KIND } from 'baseui/toast';
 import LoginContainer from "./pages/login/Container";
-import {fetchUsers} from "./pages/login/ActionCreators";
-import {loginAction, logoutAction} from "./pages/login/Actions";
+import {fetchUsers, loginUser, logoutUser} from "./pages/login/ActionCreators";
 import Header from "./components/Header";
 import HomePageContainer from "./pages/home/Container";
 import LeaderboardContainer from "./pages/leaderboard/Container";
-import {fetchQuestions} from "./pages/home/ActionCreators";
+import AddQuestionContainer from "./pages/add/Container";
+import QuestionContainer from "./pages/question/Container";
+import Loader from "./components/Loader";
+import NotFound from "./components/NotFound";
 
 const engine = new Styletron();
 
 const App = () => {
-    const home = useSelector(state => state.home);
+    const [isLoading, setIsLoading] = useState(false);
     const login = useSelector(state => state.login);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        if (login.users.isFetching) {
-            dispatch(fetchUsers());
-        }
-        if (home.questions.isFetching) {
-            dispatch(fetchQuestions())
-        }
-    }, [dispatch, login, home]);
+    const fetchUsersList = useCallback(async () => {
+        setIsLoading(true);
+        await dispatch(fetchUsers());
+        setIsLoading(false);
+    }, [dispatch]);
+
+    useEffect( () => {
+        fetchUsersList()
+    }, [fetchUsersList]);
+
+    const handleLogin = async (user) => {
+        setIsLoading(true);
+        await dispatch(loginUser(user));
+        setIsLoading(false);
+    };
+
+    const handleLogout = async () => {
+        setIsLoading(true);
+        await dispatch(logoutUser());
+        setIsLoading(false);
+    };
 
     const showLogin = () => {
         if (login.currentUser) {
@@ -41,10 +56,14 @@ const App = () => {
             return (
                 <LoginContainer show={!login.currentUser}
                                 usersData={login.users.data}
-                                handleLogin={(user) => { dispatch(loginAction(user)) }}/>
+                                handleLogin={(user) => handleLogin(user)}/>
             )
         }
     };
+
+    if (isLoading) {
+        return <Loader />
+    }
 
     return (
         <StyletronProvider value={engine}>
@@ -53,16 +72,22 @@ const App = () => {
                 {login.currentUser && (
                     <div>
                         <BrowserRouter>
-                            <Header currentUser={login.currentUser} handleLogout={() => { dispatch(logoutAction()) }}/>
+                            <Header currentUser={login.currentUser} handleLogout={() => handleLogout()}/>
                             <Switch>
-                                {/*<Route path="/about">*/}
-                                {/*    <About />*/}
-                                {/*</Route>*/}
-                                <Route path="/leaderboard">
+                                <Route path="/questions/:questionId" exact>
+                                    <QuestionContainer />
+                                </Route>
+                                <Route path="/add" exact>
+                                    <AddQuestionContainer />
+                                </Route>
+                                <Route path="/leaderboard" exact>
                                     <LeaderboardContainer />
                                 </Route>
-                                <Route path="/">
+                                <Route path="/" exact>
                                     <HomePageContainer />
+                                </Route>
+                                <Route path="/">
+                                    <NotFound />
                                 </Route>
                             </Switch>
                         </BrowserRouter>

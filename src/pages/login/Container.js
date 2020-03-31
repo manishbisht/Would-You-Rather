@@ -38,6 +38,7 @@ const LoginContainer = (props) => {
             autoFocus
             size={SIZE.default}
             role={ROLE.dialog}
+            unstable_ModalBackdropScroll={true}
         >
             <ModalHeader>Please Login to Continue</ModalHeader>
             <ModalBody>

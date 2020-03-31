@@ -14,7 +14,7 @@ const LeaderboardContainer = () => {
                 <StyledRow key={userId}>
                     <StyledCell>
                         <Avatar
-                            name="Jane Doe"
+                            name={userData.name}
                             size="scale1200"
                             src={`https://api.adorable.io/avatars/285/${userData.name}.png`}
                         />

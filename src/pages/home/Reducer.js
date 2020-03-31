@@ -1,4 +1,5 @@
 import {FETCH_QUESTIONS} from "./ActionTypes";
+import {ADD_QUESTION} from "../add/ActionTypes";
 
 const initialState = {
     questions: {
@@ -16,6 +17,10 @@ const home = (state = initialState, action) => {
                     data: action.payload,
                     isFetching: false
                 }
+            };
+        case ADD_QUESTION:
+            return {
+                ...state
             };
         default:
             return state;
