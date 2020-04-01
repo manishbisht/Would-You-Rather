@@ -46,6 +46,7 @@ const App = () => {
     const handleLogout = async () => {
         setIsLoading(true);
         await dispatch(logoutUser());
+        window.location.replace('/');
         setIsLoading(false);
     };
 
