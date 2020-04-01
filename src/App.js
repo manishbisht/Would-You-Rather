@@ -30,7 +30,11 @@ const App = () => {
     }, [dispatch]);
 
     useEffect( () => {
-        fetchUsersList()
+        if (window.location.pathname !== '/') {
+            window.location.replace('/')
+        } else {
+            fetchUsersList()
+        }
     }, [fetchUsersList]);
 
     const handleLogin = async (user) => {

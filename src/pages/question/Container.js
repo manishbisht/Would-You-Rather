@@ -6,7 +6,6 @@ import {Avatar} from "baseui/avatar";
 import { RadioGroup, Radio } from "baseui/radio";
 import {Button, KIND} from "baseui/button";
 import Loader from "../../components/Loader";
-import {addQuestion} from "../add/ActionCreators";
 import {saveQuestionAnswer} from "./ActionCreators";
 import NotFound from "../../components/NotFound";
 
@@ -26,9 +25,13 @@ const QuestionContainer = () => {
         const totalVotesCount = questionData['optionOne'].votes.length + questionData['optionTwo'].votes.length
         return (
             <div>
-                <h3>{`You have selected "${questionData[selectedAnswer].text}" for this poll`}</h3>
-                <h4>{`${questionData[selectedAnswer].votes.length} people voted for this option`}</h4>
-                <h4>{`${((questionData[selectedAnswer].votes.length / totalVotesCount) * 100).toFixed(2)} % of people voted for this option`}</h4>
+                <h2>{`You have selected "${questionData[selectedAnswer].text}" for this poll`}</h2>
+                <h3>Option 1: {questionData['optionOne'].text}</h3>
+                <h4>{`${questionData['optionOne'].votes.length} people voted for this option`}</h4>
+                <h4>{`${((questionData['optionOne'].votes.length / totalVotesCount) * 100).toFixed(2)} % of people voted for this option`}</h4>
+                <h3>Option 2: {questionData['optionTwo'].text}</h3>
+                <h4>{`${questionData['optionTwo'].votes.length} people voted for this option`}</h4>
+                <h4>{`${((questionData['optionTwo'].votes.length / totalVotesCount) * 100).toFixed(2)} % of people voted for this option`}</h4>
             </div>
         );
     };

@@ -5,7 +5,7 @@ import {fetchQuestions} from "../home/ActionCreators";
 export const saveQuestionAnswer = (data) => {
     return async (dispatch) => {
         await _saveQuestionAnswer(data);
-        const users = await dispatch(fetchUsers());
+        await dispatch(fetchUsers());
         await dispatch(fetchQuestions())
     }
 };
