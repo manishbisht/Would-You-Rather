@@ -1,3 +1,7 @@
+## How to install project dependencies
+
+### run `npm install`
+
 ## How to run the project
 
 In the project directory, you can run:
